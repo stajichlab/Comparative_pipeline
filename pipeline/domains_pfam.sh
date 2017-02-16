@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-#SBATCH --nodes 1 --ntasks 4
+#SBATCH --nodes 1 --ntasks 2 --mem-per-cpu=1G
 #SBATCH --job-name=domains.Pfam
 #SBATCH --output=domains.Pfam.%A_%a.log
 
