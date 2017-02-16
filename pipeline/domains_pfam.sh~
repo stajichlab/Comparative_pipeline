@@ -1,0 +1,13 @@
+#!/usr/bin/bash
+
+#SBATCH --nodes 1 --ntasks 8
+#SBATCH --job-title=domains.Pfam
+#SBATCH --output=domains.Pfam.%A_%a.log
+
+
+if [ -f config.txt ]; then
+ source config.txt
+else
+ echo "need config file to set HMM variable"
+ exit
+fi
