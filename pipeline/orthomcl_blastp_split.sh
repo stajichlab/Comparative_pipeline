@@ -25,5 +25,5 @@ if [ ! $CPU ]; then
 fi
 
 if [ ! -f $OUT/${PREF}.${N}.BLASTP.tab ]; then
- blastp -num_threads $CPU -db $DB -query $FOLDER/${PREF}.$N -outfmt 6 -evalue 0.01 -out $OUT/${PREF}.${N}.BLASTP.tab
+time blastp -num_threads $CPU -db $DB -query $FOLDER/${PREF}.$N -outfmt 6 -evalue 0.01 -out $OUT/${PREF}.${N}.BLASTP.tab
 fi
