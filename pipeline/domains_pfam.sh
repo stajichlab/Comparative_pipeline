@@ -18,7 +18,7 @@ else
  OUTDIR=domains
 fi
 
-mkdir -p $OUTDIR
+mkdir -p $OUTDIR/Pfam
 
 if [ ! $EXT ]; then
  EXT=aa.fasta
@@ -56,7 +56,7 @@ if [ $IN -gt $TOTAL ]; then
  exit
 fi
 INFILE=$(ls $PROTEINS/*.${EXT} | sed -n ${IN}p)
-OUT=$DOMAINS/$(basename ${INFILE} .${EXT})
+OUT=$OUTDIR/Pfam/$(basename ${INFILE} .${EXT})
 
 if [ ! -f ${OUT}.hmmscan ]; then
  hmmscan --cut_ga --cpu $CPUS --domtbl ${OUT}.domtbl -o ${OUT}.hmmscan $PFAM_DB/Pfam-A.hmm $INFILE
