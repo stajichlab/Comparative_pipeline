@@ -15,8 +15,12 @@ if [ ! $N ]; then
 fi
 
 PROTEINS=input
-PREF=db
+PREFIX=db
 OUT=BLASTP
+
+if [ -f config.txt ]; then
+ source config.txt
+fi
 if [ ! -f $OUT/${PREF}.${N}.BLASTP.bpo ]; then
-orthomclBlastParser $OUT/${PREF}.${N}.BLASTP.tab $PROTEINS > $OUT/${PREF}.${N}.BLASTP.bpo
+orthomclBlastParser $OUT/${PREFIX}.${N}.BLASTP.tab $PROTEINS > $OUT/${PREFIX}.${N}.BLASTP.bpo
 fi
