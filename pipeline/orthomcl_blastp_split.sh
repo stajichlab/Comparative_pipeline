@@ -17,13 +17,16 @@ fi
 
 FOLDER=split
 DB=goodProteins.fasta
-PREF=db
+PREFIX=db
 OUT=BLASTP
 CPU=$SLURM_CPUS_ON_NODE
 if [ ! $CPU ]; then
  CPU=1
 fi
+if [ -f config.txt ]; then
+ source config.txt
+fi
 
-if [ ! -f $OUT/${PREF}.${N}.BLASTP.tab ]; then
-time blastp -num_threads $CPU -db $DB -query $FOLDER/${PREF}.$N -outfmt 6 -evalue 0.01 -out $OUT/${PREF}.${N}.BLASTP.tab
+if [ ! -f $OUT/${PREFIX}.${N}.BLASTP.tab ]; then
+time blastp -num_threads $CPU -db $DB -query $FOLDER/${PREFIX}.$N -outfmt 6 -evalue 0.01 -out $OUT/${PREFIX}.${N}.BLASTP.tab
 fi
