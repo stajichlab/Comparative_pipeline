@@ -21,6 +21,7 @@ OUT=BLASTP
 if [ -f config.txt ]; then
  source config.txt
 fi
-if [ ! -f $OUT/${PREF}.${N}.BLASTP.bpo ]; then
-orthomclBlastParser $OUT/${PREFIX}.${N}.BLASTP.tab $PROTEINS > $OUT/${PREFIX}.${N}.BLASTP.bpo
+
+if [ ! -f $OUT/${PREFIX}.${N}.BLASTP.bpo ]; then
+ orthomclBlastParser $OUT/${PREFIX}.${N}.BLASTP.tab $PROTEINS > $OUT/${PREFIX}.${N}.BLASTP.bpo
 fi
