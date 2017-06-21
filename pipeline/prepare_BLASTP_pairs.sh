@@ -36,7 +36,9 @@ do
    for qi in $SPLIT/$q/$q.*
    do
     qname=$(basename $qi)
-    mkdir -p $TARGET/${q}-${d}
+    if [ ! -d $TARGET/${q}-${d} ]; then
+     mkdir -p $TARGET/${q}-${d}
+    fi
     DEST=$TARGET/${q}-${d}/${qname}__${d}
     if [ ! -f $DEST.$EXT -a ! -s $DEST.$EXT ]; then
      echo "$DEST $qi $db" >> $JOBSFILE
