@@ -1,4 +1,24 @@
 #!/usr/bin/perl -w
+#
+=head1 USAGE
+
+perl scripts/orthomcl_phylogenetic_profile.pl -p Domains  -i OrthoMCL.out --cf collapsefile.txt
+
+=head1 DESCRIPTION
+
+Makes an ortholog phylogenetic distribution file
+
+=head1 EXAMPLE
+
+collapsefile.txt
+Basidiobolus	Basme2finSC
+Basidiobolus	N161
+Basidiobolus	N168
+ENT	Conco1
+ENT	Conth1	
+
+=cut
+
 use strict;
 use Getopt::Long;
 use File::Spec;
