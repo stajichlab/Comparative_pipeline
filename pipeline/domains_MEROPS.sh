@@ -1,10 +1,14 @@
 #!/usr/bin/bash
 
 #SBATCH --nodes 1 --ntasks 2 --mem-per-cpu=1G
-#SBATCH --job-name=domains.Pfam
-#SBATCH --output=domains.Pfam.%A_%a.log
+#SBATCH --job-name=domains.MEROPS
+#SBATCH --output=domains.MEROPS.%A_%a.log
 
-
+OUTEXT=blasttab
+PROTEINS=pep
+EXT=aa.fasta
+MEROPS_CUTOFF=1e-10
+MEROPS_MAX_TARGETS=10
 if [ -f config.txt ]; then
  source config.txt
 else
@@ -18,23 +22,13 @@ else
  OUTDIR=domains
 fi
 
-mkdir -p $OUTDIR/Pfam
+mkdir -p $OUTDIR/MEROPS
 
-if [ ! $EXT ]; then
- EXT=aa.fasta
-fi
+module load db-merops
+module load ncbi-blast/2.6.0+
 
-if [ ! $PROTEINS ]; then
- PROTEINS=pep
-fi
-
-module load db-pfam
-module load hmmer/3
-
-echo "running $PFAM_DB"
-
-if [ ! $PFAM_DB ]; then
- echo "Need a PFAM_DB env variable either from config.txt or 'module load db-pfam'"
+if [ ! $MEROPS_DB ]; then
+ echo "Need a MEROPS_DB env variable either from config.txt or 'module load db-merops'"
  exit
 fi
 CPUS=$SLURM_CPUS_ON_NODE
@@ -58,8 +52,8 @@ if [ $IN -gt $TOTAL ]; then
  exit
 fi
 INFILE=$(ls $PROTEINS/*.${EXT} | sed -n ${IN}p)
-OUT=$OUTDIR/Pfam/$(basename ${INFILE} .${EXT})
+OUT=$OUTDIR/MEROPS/$(basename ${INFILE} .${EXT}).${OUTEXT}
 
-if [ ! -f ${OUT}.hmmscan ]; then
- hmmscan --cut_ga --cpu $CPUS --domtbl ${OUT}.domtbl -o ${OUT}.hmmscan $PFAM_DB/Pfam-A.hmm $INFILE
+if [ ! -f ${OUT} ]; then
+ blastp -query $INFILE -db $MEROPS_DB/merops_scan.lib -out ${OUT} -num_threads $CPUS -seg yes -soft_masking true -max_target_seqs $MEROPS_MAX_TARGETS -evalue $MEROPS_CUTOFF -outfmt 6 -use_sw_tback
 fi
