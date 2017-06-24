@@ -12,10 +12,9 @@ use Bio::SeqIO;
 
 my $man = 0;
 my $help = 0;
-my ($indir,$domaindir) = qw(results domainseq);
-my $out; # can be empty will print to stdout
+my ($indir,$out,$domaindir) = qw(domains/Pfam summary domain_seq);
+
 my $ext = '.domtbl';
-my $sep = '__';
 my $cutoff = 1e-2;
 my $seqdb;
 my $speciesorder;
@@ -28,44 +27,66 @@ GetOptions('help|?'               => \$help, man => \$man,
 	   'd|domain|domainout:s' => \$domaindir,
 	   'c|cutoff|evalue:s'    => \$cutoff,
 	   'ext|extension:s'      => \$ext,
-	   'db|database|seqs:s' => \$seqdb,
-	   'v|verbose!' => \$debug,	   
-	   'species:s' => \$speciesorder,
+	   'db|database|seqs:s'   => \$seqdb,
+	   'species:s'            => \$speciesorder,
 ) or pod2usage(2);
 pod2usage(1) if $help;
 
-mkdir($domaindir) unless -d $domaindir;
-my %counts;
-my %counts_gene;
-my %taxa;
-while(<>) {
-    next if /^\#/;
-    my @row = split(/\s+/,$_);
-    my $domain = $row[0];
-    my $gene = $row[3];
-    my $evalue = $row[6];
-    warn("domain=$domain gene=$gene evalue=$evalue\n") if $debug;
-#    next if $evalue > $cutoff;
-    my ($tax,$gn) = split(/\|/,$gene);
-    $taxa{$tax}++;
-    $counts{$domain}->{$tax}++;
-    $counts_gene{$domain}->{$tax}->{$gn}++;
+if ( $ext !~ /^\./) {
+  $ext = '.'. $ext;
 }
 
-my @taxanames = sort keys %taxa;
-open(my $fh => ">summary/Pfam_counts.tsv") || die $!;
-open(my $fhgn => ">summary/Pfam_counts_genes.tsv") || die $!;
+mkdir($domaindir) unless -d $domaindir;
+
+my (%table, %table_genes,%specieset,%counts);
+opendir(my $ind => $indir) || die "cannot opne $indir: $!";
+for my $file ( readdir($ind) ) {
+    next unless $file =~ /(\S+)\Q$ext\E$/;
+    my $stem = $1;
+    $stem =~ s/(sp|var)\./$1\_/; # get rid of sp/var 
+    my ($species) = split(/\./,$stem);
+    warn("species=$species\n") if $verbose;
+    my $filepath = File::Spec->catfile($indir,$file);
+    open(my $in => $filepath ) || die "cannot open $filepath: $!";
+    while(<$in>) {		# parse domtbl file
+	next if /^\#/;		# skip comment lines
+	my ($domain,$domainacc,$tlen,$gene_name,$qacc,$qlen,
+	    $fullevalue,$fullscore,$fullbias,$n,$ntotal,$cvalue,$ivalue,
+	    $score,$dombias,
+	    $hstart,$hend, $qstart,$qend,$envfrom,$envto,$acc,$desc) =
+		split(/\s+/,$_,23);
+	my $evalue = $ivalue;
+	if( $evalue > $cutoff ) {
+	    # skip
+	    next
+	}
+	$counts{$domain}->{$species}++;
+	push @{$table{$domain}->{$species}}, [$gene_name,$hstart,$hend];
+	$table_genes{$domain}->{$species}->{$gene_name}++;
+	$specieset{$species}++;
+    }
+}
+
+my @taxanames = sort keys %specieset;
+
+my $db;
+#if ( $seqdb ) {
+# $db = Bio::DB::Fasta->new($seqdb);
+#}
+mkdir($out) unless -d $out;
+open(my $fh => ">$out/Pfam_counts.tsv") || die $!;
+open(my $fhgn => ">$out/Pfam_counts_genes.tsv") || die $!;
 
 print $fh join("\t", qw(DOMAIN), @taxanames), "\n";
 print $fhgn join("\t", qw(DOMAIN), @taxanames), "\n";
 
 for my $s ( map { $_->[0] }
 	    sort { $b->[1] <=> $a->[1] }
-	    map { [$_, sum(values %{$counts{$_}})] } keys %counts ) {
+	    map { [$_, sum(values %{$counts{$_}})] } keys %table ) {
 
-    print $fh join("\t",$s,map { $counts{$s}->{$_} || 0 } @taxanames), "\n";
+    print $fh join("\t",$s,map { scalar @{$table{$s}->{$_} || []} } @taxanames), "\n";
     print $fhgn join("\t",$s,
-		     map { scalar keys %{$counts_gene{$s}->{$_} || {}} } 
+		     map { scalar keys %{$table_genes{$s}->{$_} || {}} } 
 		     @taxanames), "\n";
 }
 
