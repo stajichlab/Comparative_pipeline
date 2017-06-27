@@ -13,7 +13,7 @@ use Bio::SeqIO;
 my $man = 0;
 my $help = 0;
 my ($indir,$out,$domaindir) = qw(domains/Pfam summary domain_seq);
-
+my $outpref = 'Pfam';
 my $ext = '.domtbl';
 my $cutoff = 1e-2;
 my $seqdb;
@@ -23,6 +23,7 @@ my $verbose;
 GetOptions('help|?'               => \$help, man => \$man,
 	   'i|input:s'            => \$indir,
            'o|out:s'              => \$out,
+	   'op|outpref:s'         => \$outpref,
 	   'v|verbose!'           => \$verbose,
 	   'd|domain|domainout:s' => \$domaindir,
 	   'c|cutoff|evalue:s'    => \$cutoff,
@@ -39,7 +40,7 @@ if ( $ext !~ /^\./) {
 mkdir($domaindir) unless -d $domaindir;
 
 my (%table, %table_genes,%specieset,%counts);
-opendir(my $ind => $indir) || die "cannot opne $indir: $!";
+opendir(my $ind => $indir) || die "cannot open $indir: $!";
 for my $file ( readdir($ind) ) {
     next unless $file =~ /(\S+)\Q$ext\E$/;
     my $stem = $1;
@@ -74,8 +75,8 @@ my $db;
 # $db = Bio::DB::Fasta->new($seqdb);
 #}
 mkdir($out) unless -d $out;
-open(my $fh => ">$out/Pfam_counts.tsv") || die $!;
-open(my $fhgn => ">$out/Pfam_counts_genes.tsv") || die $!;
+open(my $fh => ">$out/$outpref\_counts.tsv") || die $!;
+open(my $fhgn => ">$out/$outpref\_counts_genes.tsv") || die $!;
 
 print $fh join("\t", qw(DOMAIN), @taxanames), "\n";
 print $fhgn join("\t", qw(DOMAIN), @taxanames), "\n";
