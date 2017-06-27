@@ -12,6 +12,13 @@ SPLIT=split
 EXT=m9
 JOBSFILE=jobs.cmds
 # can override these variables by defining them in config.txt
+
+if [ ! -f config.txt ]; then
+ if [ -f ../config.txt ]; then
+  ln -s ../config.txt .
+ fi
+fi
+
 if [ -f config.txt ]; then
  source config.txt
 fi
