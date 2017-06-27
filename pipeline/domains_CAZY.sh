@@ -60,5 +60,5 @@ OUT=$OUTDIR/CAZY/$(basename ${INFILE} .${EXT})
 
 if [ ! -f ${OUT}.hmmscan ]; then
  hmmscan --cpu $CPUS --domtbl ${OUT}.domtbl -o ${OUT}.hmmscan $CAZY_DB $INFILE
- bash $CAZY_FOLDER/hmmscan-parser.sh ${OUT}.domtbl > ${OUT}.tsv
+ bash $CAZY_FOLDER/hmmscan-parser.sh ${OUT}.domtbl | sort > ${OUT}.tsv
 fi
