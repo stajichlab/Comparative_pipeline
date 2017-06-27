@@ -1,11 +1,11 @@
 #!/usr/bin/bash
-
+#SBATCH --time 2:00:00 --mem 1G --ntasks 1 -J prepareBLASTP
 # BASH script to setup pairwise BLASTP runs
 
 CPU=1
 DBSIZE=1000000
 E=1e-3
-SIZE=1000
+SIZE=5000
 INDIR=input
 TARGET=pair_compare
 SPLIT=split
