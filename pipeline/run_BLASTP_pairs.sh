@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-#SBATCH --nodes 1 --ntasks 2 --cpus-per-task 1 -p short --time 2:00:00 --output blastp.%A_%a.out
+#SBATCH --mem 2G --nodes 1 --ntasks 8 --cpus-per-task 1 -p intel --time 24:00:00 --output blastp.%A_%a.out
 
 # THIS SCRIPT IS FOR RUNNING BLASTP for all pairs of split files
 
@@ -17,7 +17,7 @@ BLAST=blastp
 JOBS=jobs.cmds
 OUTDIR=pair_compare
 INFASTA=in
-JOBSIZE=10
+JOBSIZE=5
 CPUS=$SLURM_CPUS_ON_NODE
 N=0
 if [ ${SLURM_ARRAY_TASK_ID} ]; then
