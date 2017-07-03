@@ -12,7 +12,7 @@ if [ $SLURM_CPUS_ON_NODE ]; then
 fi
 
 DBSIZE=10000000
-E=1e-3
+EVALUE=0.0001
 BLAST=blastp
 JOBS=jobs.cmds
 OUTDIR=pair_compare
@@ -42,7 +42,7 @@ do
  do
   echo "$DEST.m9"
   if [ ! -f $DEST.m9.gz -a ! -s $DEST.m9.gz ]; then
-   time $BLAST -db $TARGET -query $QUERY -dbsize $DBSIZE -out $DEST.m9 -outfmt 6 -num_threads $CPU -evalue $E
+   time $BLAST -db $TARGET -query $QUERY -dbsize $DBSIZE -out $DEST.m9 -outfmt 6 -num_threads $CPU -evalue $EVALUE
    pigz $DEST.m9
   fi
 # if [ ! -f $DEST.bpo ]; then
