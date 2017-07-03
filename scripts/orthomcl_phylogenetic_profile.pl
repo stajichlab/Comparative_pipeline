@@ -11,11 +11,8 @@ Makes an ortholog phylogenetic distribution file
 =head1 EXAMPLE
 
 collapsefile.txt
-Basidiobolus	Basme2finSC
-Basidiobolus	N161
-Basidiobolus	N168
-ENT	Conco1
-ENT	Conth1	
+Basidiobolus	Basme2finSC,N161,N168
+ENT	Conco1,Conth1
 
 =cut
 
@@ -28,7 +25,7 @@ my $db;
 
 my $odir;
 my $pfamdir;
-my $pfamext = 'tab';
+my $pfamext = 'domtbl';
 my $hmmerversion = 3;
 my $evalue_cutoff = 0.01;
 my @collapse;
@@ -52,8 +49,10 @@ if( $collapse_file ) {
   open(my $cfile => $collapse_file) || die $!;
   while(<$cfile>) {
    next if /^\#/ || /^\s+$/;
-   my ($pref,$match) = split;
-   $collapse{$pref} = $match;
+   my ($clade,$species) = split;
+   for my $m ( split(/,/,$species) ) {
+     $collapse{$m} = $clade;
+   }
   }
 }
 die "must provide a folder with pfam table data (either domtblout or hmmer2table output\n" unless $pfamdir && -d $pfamdir;
@@ -106,6 +105,7 @@ while(<$fh>) {
 mkdir($odir) unless -d $odir;
 print $genefh join("\t",qw(GENE CLADE ORTHOGROUP DOMAINS)),"\n"; 
 while( my ($clade,$og) = each %clade ) {
+    warn("clade is $clade\n");
     open(my $ofh => ">$odir/$clade.phyloprofile.tab") || die $!;
     print $ofh join("\t", 'ORTHOGROUP','GENE', 'DOMAINS'), "\n";
     for my $ortho ( @$og ) {
