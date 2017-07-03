@@ -5,7 +5,7 @@
 # THIS SCRIPT IS FOR RUNNING BLASTP for all pairs of split files
 
 module load ncbi-blast/2.6.0+
-#module load orthomcl
+module load pigz
 CPU=1
 if [ $SLURM_CPUS_ON_NODE ]; then
  CPU=$SLURM_CPUS_ON_NODE
@@ -41,8 +41,9 @@ do
  sed -n ${R}p $JOBS | while read DEST QUERY TARGET
  do
   echo "$DEST.m9"
-  if [ ! -f $DEST.m9 -a ! -s $DEST.m9 ]; then
+  if [ ! -f $DEST.m9.gz -a ! -s $DEST.m9.gz ]; then
    time $BLAST -db $TARGET -query $QUERY -dbsize $DBSIZE -out $DEST.m9 -outfmt 6 -num_threads $CPU -evalue $E
+   pigz $DEST.m9
   fi
 # if [ ! -f $DEST.bpo ]; then
 #  orthomclBlastParser $DEST.m9 $INFASTA > $DEST.bpo
