@@ -47,7 +47,7 @@ do
      mkdir -p $TARGET/${q}-${d}
     fi
     DEST=$TARGET/${q}-${d}/${qname}__${d}
-    if [ ! -f $DEST.$EXT -a ! -s $DEST.$EXT ]; then
+    if [ ! -f $DEST.$EXT.gz -a ! -s $DEST.$EXT.gz ]; then
      echo "$DEST $qi $db" >> $JOBSFILE
     fi
    done

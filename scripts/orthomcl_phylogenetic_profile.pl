@@ -1,5 +1,5 @@
-#!/usr/bin/perl -w
-#
+#!/usr/bin/perl
+
 =head1 USAGE
 
 perl scripts/orthomcl_phylogenetic_profile.pl -p Domains  -i OrthoMCL.out --cf collapsefile.txt
@@ -17,6 +17,8 @@ ENT	Conco1,Conth1
 =cut
 
 use strict;
+use warnings;
+
 use Getopt::Long;
 use File::Spec;
 
@@ -82,8 +84,10 @@ for my $file ( readdir(PFAM) ) {
     }
 }
 open(my $genefh =>">$odir.pergene.tab");
+open(my $statsfh =>">$odir.clade_stats.tab");
+print $statsfh join("\t", qw(ORTHOGROUP_COUNT CLADES)),"\n";
 open(my $fh => $input) || die "cannot open $input: $!\n";
-my (%sp,%group2name,%clade);
+my (%sp,%group2name,%clades);
 my $groupn = 0;
 while(<$fh>) {   
     my (@orthologs) = split;
@@ -100,12 +104,23 @@ while(<$fh>) {
 	push @{$group2name{$group}}, $gene;
     }
     my $nm = join("-", sort keys %count);
-    push @{$clade{$nm}}, $group;
+    push @{$clades{$nm}}, $group;
 }
 mkdir($odir) unless -d $odir;
 print $genefh join("\t",qw(GENE CLADE ORTHOGROUP DOMAINS)),"\n"; 
-while( my ($clade,$og) = each %clade ) {
-    warn("clade is $clade\n");
+my %stats;
+
+for my $clade ( 
+    # schwartzian transformation
+    map { $_->[1] } 
+    sort { $b->[0] <=> $a->[0] } 
+    map { [ scalar @{$clades{$_}}, $_] }
+# schwartzian transformation here to process clades by largest 
+# membership to smallest
+    keys %clades ) {
+    my $og = $clades{$clade};
+    print $statsfh join("\t",(scalar @$og), $clade),"\n";
+
     open(my $ofh => ">$odir/$clade.phyloprofile.tab") || die $!;
     print $ofh join("\t", 'ORTHOGROUP','GENE', 'DOMAINS'), "\n";
     for my $ortho ( @$og ) {
