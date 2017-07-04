@@ -5,7 +5,6 @@
 # THIS SCRIPT IS FOR RUNNING BLASTP for all pairs of split files
 
 module load ncbi-blast/2.6.0+
-module load pigz
 CPU=1
 if [ $SLURM_CPUS_ON_NODE ]; then
  CPU=$SLURM_CPUS_ON_NODE
