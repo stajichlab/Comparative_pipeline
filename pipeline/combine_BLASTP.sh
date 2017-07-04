@@ -29,7 +29,7 @@ rm -f $PROJECT.BLASTP
 for file in $(ls input/*.fasta)
 do
  base=$(basename $file .fasta)
- find -L pair_compare/$base-* -name "*.m9.gz"  | xargs zcat | time sort -T $TMPDIR --parallel $CPU --buffer-size=64G -k1,12nr >> $PROJECT.BLASTP
+ find -L pair_compare/$base-* -name "*.m9.gz"  | xargs zcat | time sort -T $TMPDIR --parallel $CPU --buffer-size=64G -k1,1 -k12,12nr >> $PROJECT.BLASTP
 done
 
 fi
