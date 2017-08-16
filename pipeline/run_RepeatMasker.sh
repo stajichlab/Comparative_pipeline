@@ -30,7 +30,7 @@ fi
 GENOMEFILE=$(ls $GENOME/*.fasta | sed -n ${N}p)
 STEM=$(basename $GENOMEFILE .fasta)
 pushd $OUTDIR
-if [ -f ${STEM}.fasta ]; then 
+if [ ! -e ${STEM}.fasta ]; then 
  ln -s ../$GENOMEFILE .
 fi
 if [ ! -f ${STEM}.RM.out ]; then
