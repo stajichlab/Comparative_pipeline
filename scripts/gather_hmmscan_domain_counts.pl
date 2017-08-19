@@ -7,12 +7,13 @@ use List::Util qw(sum);
 
 use Getopt::Long;
 use Pod::Usage;
-use Bio::DB::Fasta;
-use Bio::SeqIO;
 
 my $man = 0;
 my $help = 0;
-my ($indir,$out,$domaindir) = qw(domains/Pfam summary domain_seq);
+my $cdbfasta = 'cdbfasta';
+my $cdbyank  = 'cdbyank';
+
+my ($indir,$out,$domaindir) = qw(domains/Pfam summary domain_seq/Pfam);
 my $outpref = 'Pfam';
 my $ext = '.domtbl';
 my $cutoff = 1e-2;
@@ -30,6 +31,9 @@ GetOptions('help|?'               => \$help, man => \$man,
 	   'ext|extension:s'      => \$ext,
 	   'db|database|seqs:s'   => \$seqdb,
 	   'species:s'            => \$speciesorder,
+	   'y|cdbyank|yank:s'     => \$cdbyank,
+	   'idx|cdbfasta:s'       => \$cdbfasta,
+
 ) or pod2usage(2);
 pod2usage(1) if $help;
 
@@ -70,10 +74,14 @@ for my $file ( readdir($ind) ) {
 
 my @taxanames = sort keys %specieset;
 
-my $db;
-#if ( $seqdb ) {
-# $db = Bio::DB::Fasta->new($seqdb);
-#}
+if ( $seqdb ) {
+    if( ! -f "$seqdb/allseq.cidx" ) {
+	`cat $seqdb/*.fasta > $seqdb/allseq`;
+	`$cdbfasta $seqdb/allseq`;
+    }
+}
+
+
 mkdir($out) unless -d $out;
 open(my $fh => ">$out/$outpref\_counts.tsv") || die $!;
 open(my $fhgn => ">$out/$outpref\_counts_genes.tsv") || die $!;
@@ -89,6 +97,13 @@ for my $s ( map { $_->[0] }
     print $fhgn join("\t",$s,
 		     map { scalar keys %{$table_genes{$s}->{$_} || {}} } 
 		     @taxanames), "\n";
+
+    if( $seqdb && -f "$seqdb/allseq.cidx" ) {
+	open(my $outseq => "| $cdbyank $seqdb/allseq.cidx > $domaindir/$s.fas") || die $!;
+	print $outseq join("\n", map { keys %{$table_genes{$s}->{$_} || {}} }
+			   @taxanames ), "\n";
+	close($outseq);
+    }
 }
 
 
