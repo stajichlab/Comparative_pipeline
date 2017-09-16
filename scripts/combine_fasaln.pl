@@ -15,6 +15,9 @@ my $debug ;
 my $include;
 my $rand_subset;
 my $seed;
+my $MOLTYPE = 'PROT';
+my $alpha = 'protein';
+
 GetOptions('d|dir:s'   => \$dir,
 	   'ext:s'     => \$ext,
 	   'if:s'       => \$iformat,
@@ -25,6 +28,8 @@ GetOptions('d|dir:s'   => \$dir,
   	   'include:s' => \$include,
 	   'seed:i'    => \$seed,
 	   'rand:i'    => \$rand_subset,
+           'alpha:s'   => \$alpha,
+           'mol:s'     => \$MOLTYPE,
 	   );
 
 if ($seed) { 
@@ -78,13 +83,13 @@ if( $rand_subset ) {
 }
 for my $f ( @files ) {
     my ($stem,$fullfile) = @$f; 
-    my $in = Bio::AlignIO->new(-format => $iformat, -alphabet => 'protein',
+    my $in = Bio::AlignIO->new(-format => $iformat, -alphabet => $alpha,
 			       -file   => $fullfile);
     my ($fbase) = $stem;
     warn($fullfile,"\n") if $debug;
     if( my $aln = $in->next_aln ) {
         my $now = $last + $aln->length - 1;
-        push @part, "$fbase = $last-$now;";
+        push @part, "$MOLTYPE, $fbase = $last-$now";
 	$last = $now + 1;
 	my %seen;
 	for my $seq ( $aln->each_seq ) {

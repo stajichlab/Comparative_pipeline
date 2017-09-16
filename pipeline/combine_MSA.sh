@@ -8,21 +8,19 @@
 
 module load RAxML
 EXPECTEDNAMES=expected
-
-if [ ! -f $EXPECTEDNAMES ]; then
- head -q -n1 in/*.fasta | awk -F\| '{print $1}' | awk '{print $1}' > $EXPECTEDNAMES
-fi
-
+MARKERS=singlecopy
 if [ -f config.txt ]; then
  source config.txt
 else
- echo "need config file to set HMM variable"
+ echo "need config file to set some of the pipeline variables"
  exit
 fi
 
+if [ ! -f $EXPECTEDNAMES ]; then
+ head -q -n1 $ORTHOINPUT/*.fasta | awk -F\| '{print $1}' | awk '{print $1}' > $EXPECTEDNAMES
+fi
 
-MARKERS=singlecopy
-ALN=orthomcl_singlecopy
+ALN=$PROJECT.I${INFLATION}.single_copy_orthologs
 count=$(wc -l $EXPECTEDNAMES | awk '{print $1}')
 #echo "count is $count"
 

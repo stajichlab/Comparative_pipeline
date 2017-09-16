@@ -2,6 +2,7 @@
 #SBATCH --time 2:00:00 --mem 1G --ntasks 1 -J prepareBLASTP
 # BASH script to setup pairwise BLASTP runs
 
+module load ncbi-blast/2.6.0+
 CPU=1
 DBSIZE=1000000
 E=1e-3
@@ -23,6 +24,7 @@ if [ -f config.txt ]; then
  source config.txt
 fi
 
+
 for l in $INDIR/*.fasta
 do
  left=$(basename $l .fasta)
@@ -37,6 +39,9 @@ rm -f $JOBSFILE
 for db in $INDIR/*.fasta
 do
  d=$(basename $db .fasta)
+ if [ ! -f $db.phr ]; then
+  makeblastdb -dbtype prot -in $db
+ fi
  for query in $INDIR/*.fasta
  do
    q=$(basename $query .fasta)

@@ -40,6 +40,10 @@ do
  sed -n ${R}p $JOBS | while read DEST QUERY TARGET
  do
   echo "$DEST.m9"
+  destdir=$(dirname $DEST)
+  if [ ! -d $destdir ]; then
+   mkdir -p $destdir
+  fi 
   if [ ! -f $DEST.m9.gz -a ! -s $DEST.m9.gz ]; then
    time $BLAST -db $TARGET -query $QUERY -dbsize $DBSIZE -out $DEST.m9 -outfmt 6 -num_threads $CPU -evalue $EVALUE
    pigz $DEST.m9

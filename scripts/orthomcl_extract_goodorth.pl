@@ -26,7 +26,7 @@ my $allowed_missing  = 2;
 my $outdir = 'orthomcl_good';
 my $prefix = 'ORTHO_';
 my $infile;
-my $max_per_species = 3;
+my $max_per_species = 1;
 my $suffix = ".fa";
 my $cdbyank = 'cdbyank';
 my $cdbfasta = 'cdbfasta';
@@ -54,8 +54,9 @@ if( $tab ) {
 } else {
     $report_fh = \*STDOUT;
 }
-
-`cdbfasta $db`;
+if ( ! -f $db.cidx ) {
+ `cdbfasta $db`;
+}
 #my $dbh = Bio::DB::Fasta->new($dbdir);
 my %skip_taxa = map { $_ => 1 } @skip;
 my $in;
