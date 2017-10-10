@@ -113,7 +113,7 @@ gather_hmmscan_domain_counts.pl - generate a table of domain counts from hmmscan
 
 =head1 USAGE
 
-perl gather_hmmscan_domain_counts.pl -i domains -o table [-ext .domtbl]
+perl gather_hmmscan_domain_counts.pl -i domains?Pfam -o table [-ext .domtbl]
 
 =head1 DESCRIPTION
 
