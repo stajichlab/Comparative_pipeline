@@ -1,12 +1,13 @@
 #!/usr/bin/bash
 
-#SBATCH --nodes 1 --ntasks 2 --mem-per-cpu=1G
+#SBATCH --nodes 1 --ntasks 2 --mem-per-cpu=1G --time 8:00:00
 #SBATCH --job-name=MEROPS.domains
 #SBATCH --output=domains.MEROPS.%A_%a.log
 
 OUTEXT=blasttab
 PROTEINS=pep
-EXT=fasta
+EXT=aa.fasta
+DOMAINS=domains
 MEROPS_CUTOFF=1e-10
 MEROPS_MAX_TARGETS=10
 if [ -f config.txt ]; then
@@ -16,13 +17,7 @@ else
  exit
 fi
 
-if [ $DOMAINS ]; then
- OUTDIR=$DOMAINS
-else
- OUTDIR=domains
-fi
-
-mkdir -p $OUTDIR/MEROPS
+mkdir -p $DOMAINS/MEROPS
 
 module load db-merops
 module load ncbi-blast/2.6.0+
@@ -52,7 +47,7 @@ if [ $IN -gt $TOTAL ]; then
  exit
 fi
 INFILE=$(ls $PROTEINS/*.${EXT} | sed -n ${IN}p)
-OUT=$OUTDIR/MEROPS/$(basename ${INFILE} .${EXT}).${OUTEXT}
+OUT=$DOMAINS/MEROPS/$(basename ${INFILE} .${EXT}).${OUTEXT}
 
 if [ ! -f ${OUT} ]; then
  blastp -query $INFILE -db $MEROPS_DB/merops_scan.lib -out ${OUT} -num_threads $CPUS -seg yes -soft_masking true -max_target_seqs $MEROPS_MAX_TARGETS -evalue $MEROPS_CUTOFF -outfmt 6 -use_sw_tback

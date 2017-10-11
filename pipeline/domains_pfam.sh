@@ -4,6 +4,9 @@
 #SBATCH --job-name=Pfam.domains
 #SBATCH --output=domains.Pfam.%A_%a.log
 
+EXT=aa.fasta
+PROTEINS=pep
+DOMAINS=domains
 
 if [ -f config.txt ]; then
  source config.txt
@@ -11,22 +14,7 @@ else
  echo "need config file to set some project-specific variables"
  exit
 fi
-
-if [ $DOMAINS ]; then
- OUTDIR=$DOMAINS
-else
- OUTDIR=domains
-fi
-
-mkdir -p $OUTDIR/Pfam
-
-if [ ! $EXT ]; then
- EXT=fasta
-fi
-
-if [ ! $PROTEINS ]; then
- PROTEINS=pep
-fi
+mkdir -p $DOMAINS/Pfam
 
 module load db-pfam
 module load hmmer/3
@@ -58,7 +46,7 @@ if [ $IN -gt $TOTAL ]; then
  exit
 fi
 INFILE=$(ls $PROTEINS/*.${EXT} | sed -n ${IN}p)
-OUT=$OUTDIR/Pfam/$(basename ${INFILE} .${EXT})
+OUT=$DOMAINS/Pfam/$(basename ${INFILE} .${EXT})
 
 if [ ! -f ${OUT}.hmmscan ]; then
  hmmscan --cut_ga --cpu $CPUS --domtbl ${OUT}.domtbl -o ${OUT}.hmmscan $PFAM_DB/Pfam-A.hmm $INFILE

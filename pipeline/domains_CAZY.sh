@@ -1,10 +1,11 @@
 #!/usr/bin/bash
 
-#SBATCH --nodes 1 --ntasks 2 --mem-per-cpu=1G
+#SBATCH --nodes 1 --ntasks 2 --mem-per-cpu=1G --time 12:00:00
 #SBATCH --job-name=CAZY
 #SBATCH --output=domains.CAZY.%A_%a.log
 
-
+DOMAINS=domains
+EXT=aa.fasta
 if [ -f config.txt ]; then
  source config.txt
 else
@@ -12,16 +13,10 @@ else
  exit
 fi
 
-if [ $DOMAINS ]; then
- OUTDIR=$DOMAINS
-else
- OUTDIR=domains
-fi
-
-mkdir -p $OUTDIR/CAZY
+mkdir -p $DOMAINS/CAZY
 
 if [ ! $EXT ]; then
- EXT=fasta
+ EXT=aa.fasta
 fi
 
 if [ ! $PROTEINS ]; then
@@ -56,7 +51,7 @@ if [ $IN -gt $TOTAL ]; then
  exit
 fi
 INFILE=$(ls $PROTEINS/*.${EXT} | sed -n ${IN}p)
-OUT=$OUTDIR/CAZY/$(basename ${INFILE} .${EXT})
+OUT=$DOMAINS/CAZY/$(basename ${INFILE} .${EXT})
 
 if [ ! -f ${OUT}.hmmscan ]; then
  hmmscan --cpu $CPUS --domtbl ${OUT}.domtbl -o ${OUT}.hmmscan $CAZY_DB $INFILE
