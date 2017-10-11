@@ -54,7 +54,7 @@ if( $tab ) {
 } else {
     $report_fh = \*STDOUT;
 }
-if ( ! -f $db.cidx ) {
+if ( ! -f "$db.cidx" ) {
  `cdbfasta $db`;
 }
 #my $dbh = Bio::DB::Fasta->new($dbdir);
