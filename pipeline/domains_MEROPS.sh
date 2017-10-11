@@ -6,7 +6,7 @@
 
 OUTEXT=blasttab
 PROTEINS=pep
-EXT=aa.fasta
+EXT=fasta
 MEROPS_CUTOFF=1e-10
 MEROPS_MAX_TARGETS=10
 if [ -f config.txt ]; then

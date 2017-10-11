@@ -4,5 +4,6 @@ DOMAINS=domains
 PROTEINS=pep
 CODING=cds
 ORTHOINPUT=input
+EXT=aa.fasta
 INFLATION=15 #I 1.5
 COMPAREFOLDER=./Comparative_pipeline

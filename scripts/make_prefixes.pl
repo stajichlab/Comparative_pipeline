@@ -16,7 +16,7 @@ for my $file ( sort readdir(DIR) ) {
     $stem =~ s/\.v\d+//;
 
     open(my $in => "head -n 1 $dir/$file |") || die $!;
-    if( my $line = <$in> ) {
+    if( defined(my $line = <$in>) ) {
 	if ( $line =~ />(\S+)/ ) {
 	    my ($pref) = split(/\|/,$1);
 	    print join("\t",$pref,$stem), "\n";
