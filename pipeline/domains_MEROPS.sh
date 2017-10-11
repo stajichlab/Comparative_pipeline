@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 #SBATCH --nodes 1 --ntasks 2 --mem-per-cpu=1G
-#SBATCH --job-name=domains.MEROPS
+#SBATCH --job-name=MEROPS.domains
 #SBATCH --output=domains.MEROPS.%A_%a.log
 
 OUTEXT=blasttab

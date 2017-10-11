@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
-#SBATCH --nodes 1 --ntasks 2 --mem-per-cpu=1G
-#SBATCH --job-name=domains.Pfam
+#SBATCH --nodes 1 --ntasks 8 --mem-per-cpu=2G
+#SBATCH --job-name=Pfam.domains
 #SBATCH --output=domains.Pfam.%A_%a.log
 
 
@@ -21,7 +21,7 @@ fi
 mkdir -p $OUTDIR/Pfam
 
 if [ ! $EXT ]; then
- EXT=aa.fasta
+ EXT=fasta
 fi
 
 if [ ! $PROTEINS ]; then
