@@ -21,7 +21,7 @@ fi
 mkdir -p $OUTDIR/CAZY
 
 if [ ! $EXT ]; then
- EXT=aa.fasta
+ EXT=fasta
 fi
 
 if [ ! $PROTEINS ]; then
