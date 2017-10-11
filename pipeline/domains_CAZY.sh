@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-#SBATCH --nodes 1 --ntasks 2 --mem-per-cpu=1G --time 12:00:00
+#SBATCH --nodes 1 --ntasks 4 --mem-per-cpu=1G --time 12:00:00
 #SBATCH --job-name=CAZY
 #SBATCH --output=domains.CAZY.%A_%a.log
 
