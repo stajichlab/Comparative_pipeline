@@ -16,7 +16,6 @@ EVALUE=0.0001
 BLAST=blastp
 JOBS=jobs.cmds
 OUTDIR=pair_compare
-INFASTA=in
 JOBSIZE=5
 CPUS=$SLURM_CPUS_ON_NODE
 N=0
@@ -24,6 +23,11 @@ if [ ${SLURM_ARRAY_TASK_ID} ]; then
  N=${SLURM_ARRAY_TASK_ID}
 elif [ $1 ]; then
  N=$1
+fi
+
+# allow customizing variables with local config file
+if [ -f config.txt ]; then
+ source config.txt
 fi
 
 MAX=$(wc -l $JOBS | awk '{print $1}')
@@ -49,8 +53,5 @@ do
    time $BLAST -db $TARGET -query $QUERY -dbsize $DBSIZE -out $DEST.m9 -outfmt 6 -num_threads $CPU -evalue $EVALUE
    pigz $DEST.m9
   fi
-# if [ ! -f $DEST.bpo ]; then
-#  orthomclBlastParser $DEST.m9 $INFASTA > $DEST.bpo
-# fi
  done
 done
