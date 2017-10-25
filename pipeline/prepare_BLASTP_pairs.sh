@@ -10,7 +10,7 @@ SIZE=5000
 INDIR=input
 TARGET=pair_compare
 SPLIT=split
-EXT=m9
+BLASTEXT=m9
 JOBSFILE=jobs.cmds
 # can override these variables by defining them in config.txt
 
@@ -23,7 +23,6 @@ fi
 if [ -f config.txt ]; then
  source config.txt
 fi
-
 
 for l in $INDIR/*.fasta
 do
@@ -52,7 +51,8 @@ do
      mkdir -p $TARGET/${q}-${d}
     fi
     DEST=$TARGET/${q}-${d}/${qname}__${d}
-    if [ ! -f $DEST.$EXT.gz -a ! -s $DEST.$EXT.gz ]; then
+    if [ ! -f $DEST.$BLASTEXT.gz -a ! -s $DEST.$BLASTEXT.gz ]; then
+     echo "no $DEST.$BLASTEXT.gz"
      echo "$DEST $qi $db" >> $JOBSFILE
     fi
    done
