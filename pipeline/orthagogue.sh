@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-#SBATCH --time 2-0:00:00 --ntasks 8 --mem 32G --log orthagogue.log
+#SBATCH --time 2-0:00:00 --ntasks 8 --mem 32G --out orthagogue.log
 module load orthagogue
 module load mcl
 
