@@ -4,6 +4,7 @@ COMPAREFOLDER=./Comparative_pipeline
 INFLATION=15
 ORTHOINPUT=input
 ALLOWED_MISSING_SINGLECOPY=1
+ORTHODIR=orthologs
 if [ -f config.txt ]; then
  source config.txt
 else
@@ -20,5 +21,4 @@ fi
 if [ ! -f $ALLPROTEINS.cidx ]; then
  cdbfasta $ALLPROTEINS
 fi
-
-perl $COMPAREFOLDER/scripts/orthomcl_extract_goodorth.pl -r $PROJECT.I${INFLATION}.single_copy_orthologs.tab -i $PROJECT.I${INFLATION}.mcl.out -db $ALLPROTEINS --missing $ALLOWED_MISSING_SINGLECOPY -o $PROJECT.I${INFLATION}.single_copy_orthologs
+perl $COMPAREFOLDER/scripts/orthomcl_extract_goodorth.pl -r $PROJECT.I${INFLATION}.single_copy_orthologs.tab -i $ORTHODIR/$PROJECT.I${INFLATION}.mcl.out -db $ALLPROTEINS --missing $ALLOWED_MISSING_SINGLECOPY -o $PROJECT.I${INFLATION}.single_copy_orthologs
