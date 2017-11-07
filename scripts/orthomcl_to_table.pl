@@ -14,11 +14,14 @@ perl Comparative_pipeline/scripts/orthomcl_to_table.pl
   -i Orthologs/Basidiobolus.OrthoMCL.I15.out 
   -db Orthologs/goodProteins.fasta 
   --pfam Domains/Pfam 
+  --cazy Domains/CAZY
+  --merops Domains/MEROPS
   -s Basme2finSC,N161,N168,Conco1,Conth1,Rambr1,Linpe1,SMEG,AX774,Synfus1,Synplu1
 
 =head1 AUTHOR
 
 Jason Stajich @hyphaltip http//github.com/hyphaltip
+Yan Wang @rockunderking https://github.com/YanWangTF
 
 =cut
 
@@ -33,6 +36,8 @@ use Bio::DB::Fasta;
 
 # hardcoded (for now)
 my $pfamext = 'domtbl';
+my $cazyext = 'domtbl';
+my $meropsext = 'blasttab';
 
 # user set
 my $evalue_cutoff = 1e-3;
@@ -41,6 +46,8 @@ my $outdir;
 my $db;
 my $report;
 my $pfamdir = 'Domains/Pfam';
+my $cazydir = 'Domains/CAZY';
+my $meropsdir = 'Domains/MEROPS';
 my $ordering;
 my $onlyshowrequested = 0;
 GetOptions(
@@ -48,6 +55,8 @@ GetOptions(
     'o|outdir:s'        => \$outdir,
     'r|report:s'        => \$report,
     'p|pfam:s'          => \$pfamdir,
+    'c|cazy:s'          => \$cazydir,
+    'm|merops:s'          => \$meropsdir,
     'db:s'              => \$db,
     's|species|order:s' => \$ordering,
     'only|onlyreq!'     => \$onlyshowrequested,
@@ -65,6 +74,8 @@ if( $report ) {
 }
 my $dbh = Bio::DB::Fasta->new($db);
 my %gene2domains;
+my %gene2domains_cazy;
+my %gene2domains_merops;
 my %pfam2desc;
 if( $pfamdir && -d $pfamdir ) {
     opendir(my $dir => $pfamdir) || die "cannot open $pfamdir: $!";
@@ -93,7 +104,59 @@ if( $pfamdir && -d $pfamdir ) {
     }    
 }
 
+my %cazy2desc;
+if( $cazydir && -d $cazydir ) {
+    opendir(my $dir => $cazydir) || die "cannot open $cazydir: $!";
+    for my $file ( readdir($dir) ) {
+	next unless $file =~ /(\S+)\.$cazyext$/;
+	my $stem = $1;
+	open(my $fh => File::Spec->catfile($cazydir,$file) ) || 
+	    die"cannot opend $dir/$file: $!";
 
+	while(<$fh>) {
+	    next if /^\#/;
+
+	    my ($domain_cazy,$domaccno,$tlen,$gene_name,$qaccno,$qlen,
+		$fullevalue,$fullscore,$fullbias,$n,$ntotal,$cvalue,$ivalue,
+		$score,$dombias,
+		$hstart,$hend, $qstart,$qend,$envfrom,$envto,$acc,$desc) =
+		    split(/\s+/,$_,23);
+	    my $evalue = $ivalue;
+	    if( ! exists $cazy2desc{$domain_cazy} ) {
+		$cazy2desc{$domain_cazy} = [$desc, $domaccno,$tlen ];
+	    }
+	    # not necessary if we are using pfam Gathering cutoff??
+	    # next if $evalue > $evalue_cutoff;
+	    $gene2domains_cazy{$gene_name}->{$domain_cazy}++;
+	}
+    }    
+}
+
+my %merops2desc;
+if( $meropsdir && -d $meropsdir ) {
+    opendir(my $dir => $meropsdir) || die "cannot open $meropsdir: $!";
+    for my $file ( readdir($dir) ) {
+	next unless $file =~ /(\S+)\.$meropsext$/;
+	my $stem = $1;
+	open(my $fh => File::Spec->catfile($meropsdir,$file) ) || 
+	    die"cannot opend $dir/$file: $!";
+
+	while(<$fh>) {
+	    next if /^\#/;
+
+	    my ($gene_name,$domain_merops,$identity,$alnlen,$nmismatch,$gap,$qstart,$qend,
+		$hstart,$hend,$KA_evalue,$score) =
+		    split(/\t/,$_,12);
+	    my $evalue = $KA_evalue;
+	    if( ! exists $merops2desc{$domain_merops} ) {
+		$merops2desc{$domain_merops} = [$identity, $hstart,$hend ];
+	    }
+	    # not necessary if we are using pfam Gathering cutoff??
+	    # next if $evalue > $evalue_cutoff;
+	    $gene2domains_merops{$gene_name}->{$domain_merops}++;
+	}
+    }    
+}
 
 mkdir($outdir);
 my @groups;
@@ -108,12 +171,28 @@ while(<$fh>) {
 				-file =>">$outdir/ORTHO_$countn.fa");
     my $sp = {};
     my $domains = {};
+    my $domains_cazy = {};
+    my $domains_merops = {};
     for my $gene ( @genes ) {
 	
-	my ($spname,$genename) = split(/\|/,$gene,2);
+	my ($spname,$genename) = split(/\|/,$gene);
 	if( exists $gene2domains{$gene} ) {
 	    while (my ($d,$ct) = each %{$gene2domains{$gene}} ) {
 		$domains->{$d} += $ct;
+	    }
+	}
+	$spall{$spname}++;
+	$sp->{$spname}++;
+	if( exists $gene2domains_cazy{$gene} ) {
+	    while (my ($d,$ct) = each %{$gene2domains_cazy{$gene}} ) {
+		$domains_cazy->{$d} += $ct;
+	    }
+	}
+	$spall{$spname}++;
+	$sp->{$spname}++;
+	if( exists $gene2domains_merops{$gene} ) {
+	    while (my ($d,$ct) = each %{$gene2domains_merops{$gene}} ) {
+		$domains_merops->{$d} += $ct;
 	    }
 	}
 	$spall{$spname}++;
@@ -125,7 +204,7 @@ while(<$fh>) {
 	    next;
 	}
     }
-    push @groups, [ $sp, &domain_string($domains)];
+    push @groups, [ $sp, &domain_string($domains), &domain_string($domains_cazy), &domain_string($domains_merops)];
     #last if @groups > 10;
 }
 
@@ -155,7 +234,7 @@ if ( $ordering ) {
     @species = sort { $spall{$b} <=> $spall{$a} } keys %spall;
 }
 
-print $report_fh join("\t", qw(ORTHOMCL), @species, qw(DOMAINS)),"\n";
+print $report_fh join("\t", qw(ORTHOMCL), @species, qw(Pfam), qw(CAZY), qw(MEROPS)),"\n";
 my $i = 0;
 for my $group ( @groups ) {
     print $report_fh join("\t", sprintf("ORTHO_%05d",$i++),
@@ -163,7 +242,7 @@ for my $group ( @groups ) {
 			  # this turns hash of counts to a string
 			  # it may need to be written to also show counts 
 			  # of domains to show their continuity
-			  $group->[1]),
+			  $group->[1], $group->[2], $group->[3]),
     "\n";					
 }
 
