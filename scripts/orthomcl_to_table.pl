@@ -188,15 +188,11 @@ while(<$fh>) {
 		$domains_cazy->{$d} += $ct;
 	    }
 	}
-	$spall{$spname}++;
-	$sp->{$spname}++;
 	if( exists $gene2domains_merops{$gene} ) {
 	    while (my ($d,$ct) = each %{$gene2domains_merops{$gene}} ) {
 		$domains_merops->{$d} += $ct;
 	    }
 	}
-	$spall{$spname}++;
-	$sp->{$spname}++;
 	if( my $seq = $dbh->get_Seq_by_acc($gene) ) {
 	    $seqio->write_seq($seq);
 	} else {
