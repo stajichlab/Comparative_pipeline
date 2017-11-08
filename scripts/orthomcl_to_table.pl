@@ -36,7 +36,7 @@ use Bio::DB::Fasta;
 
 # hardcoded (for now)
 my $pfamext = 'domtbl';
-my $cazyext = 'domtbl';
+my $cazyext = 'tsv';
 my $meropsext = 'blasttab';
 
 # user set
@@ -116,14 +116,12 @@ if( $cazydir && -d $cazydir ) {
 	while(<$fh>) {
 	    next if /^\#/;
 
-	    my ($domain_cazy,$domaccno,$tlen,$gene_name,$qaccno,$qlen,
-		$fullevalue,$fullscore,$fullbias,$n,$ntotal,$cvalue,$ivalue,
-		$score,$dombias,
-		$hstart,$hend, $qstart,$qend,$envfrom,$envto,$acc,$desc) =
-		    split(/\s+/,$_,23);
+	    my ($domain_cazy,$domlen,$gene_name,$genelen,
+		$ivalue,$hstart,$hend,$qstart,$qend,$coverage) =
+		    split(/\t/,$_,10);
 	    my $evalue = $ivalue;
 	    if( ! exists $cazy2desc{$domain_cazy} ) {
-		$cazy2desc{$domain_cazy} = [$desc, $domaccno,$tlen ];
+		$cazy2desc{$domain_cazy} = [$domlen, $genelen,$coverage ];
 	    }
 	    # not necessary if we are using pfam Gathering cutoff??
 	    # next if $evalue > $evalue_cutoff;
@@ -219,7 +217,7 @@ if ( $ordering ) {
     unless( $onlyshowrequested ) { # if set the --only flag then
 	                           # don't complain that order list is
 	                           # incomplete
-	for my $e ( keys %spall ) {
+for my $e ( keys %spall ) {
 	    unless ( $obs{$e} ) {
 		warn("expected to see $e in the order list");
 		push @species, $e;
@@ -235,10 +233,11 @@ my $i = 0;
 for my $group ( @groups ) {
     print $report_fh join("\t", sprintf("ORTHO_%05d",$i++),
 			  (map { $group->[0]->{$_} || 0 } @species),
-			  # this turns hash of counts to a string
+			  # this turns hash of icounts to a string
 			  # it may need to be written to also show counts 
 			  # of domains to show their continuity
-			  $group->[1], $group->[2], $group->[3]),
+
+$group->[1], $group->[2], $group->[3]),
     "\n";					
 }
 
