@@ -172,8 +172,7 @@ while(<$fh>) {
     my $domains_cazy = {};
     my $domains_merops = {};
     for my $gene ( @genes ) {
-	
-	my ($spname,$genename) = split(/\|/,$gene);
+	my ($spname,$genename) = split(/\|/,$gene,2);
 	if( exists $gene2domains{$gene} ) {
 	    while (my ($d,$ct) = each %{$gene2domains{$gene}} ) {
 		$domains->{$d} += $ct;
