@@ -42,10 +42,12 @@ fi
 INFILE=$(ls $GENBANK/*.${EXT} | sed -n ${N}p)
 echo "INFILE=$INFILE"
 OUT=$OUTDIR/$(basename ${INFILE} .${EXT})
-module unload openmpi
-module unload python
-module load antismash/4.0-branch
-export PYTHONHOME=$VIRTUAL_ENV
-echo "$VIRTUAL_ENV"
-srun -J AntiSmash --out AntiSmash.%A_$N.out --ntasks 24 --nodes 1 --mem 24G run_antismash.py -c $CPUS --taxon fungi --input-type nucl --clusterblast  --subclusterblast --smcogs --knownclusterblast --cassis --borderpredict --asf --outputfolder $OUT $INFILE
+module unload perl
+module unload perl
+module load antismash/4.1.0
+module unload python/3
+source activate antismash
+CPU=$SLURM_CPUS_ON_NODE
 
+antismash --taxon fungi --outputfolder $OUT   --clusterblast  --subclusterblast --smcogs --knownclusterblast --borderpredict --asf -c $CPUS \
+         --asf --full-hmmer --cassis --clusterblast --smcogs --subclusterblast --knownclusterblast $INFILE 
