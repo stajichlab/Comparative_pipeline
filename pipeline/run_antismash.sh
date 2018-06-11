@@ -49,5 +49,6 @@ module unload python/3
 source activate antismash
 CPU=$SLURM_CPUS_ON_NODE
 
-antismash --taxon fungi --outputfolder $OUT   --clusterblast  --subclusterblast --smcogs --knownclusterblast --borderpredict --asf -c $CPUS \
-         --asf --full-hmmer --cassis --clusterblast --smcogs --subclusterblast --knownclusterblast $INFILE 
+antismash --taxon fungi -c $CPUS --outputfolder $OUT   --clusterblast  --subclusterblast --smcogs --knownclusterblast \
+ --borderpredict --asf \
+ --full-hmmer --cassis --clusterblast --smcogs --subclusterblast --knownclusterblast $INFILE 
