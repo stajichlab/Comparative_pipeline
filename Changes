@@ -1,0 +1,4 @@
+
+* Removed cdbfasta/cdbyank dependancy and use esl-sfetch (HMMER/Easel) in `gather_hmmscan_domain_counts.pl` and `gather_hmmsearch_domain_counts.pl`
+* add Interproscan running step with domains_IPR.sh
+* assume logs folder will be created - need to check more for job submission
