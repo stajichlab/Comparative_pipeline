@@ -1,8 +1,8 @@
 #!/usr/bin/bash
-
+mkdir -p logs
 #SBATCH --nodes 1 --ntasks 4 --mem=4G --time 12:00:00
 #SBATCH --job-name=CAZY
-#SBATCH --output=domains.CAZY.%A_%a.log
+#SBATCH --output=logs/domains.CAZY.%A_%a.log
 
 DOMAINS=domains
 EXT=aa.fasta
@@ -30,7 +30,7 @@ if [ ! $CAZY_DB ]; then
  echo "Need a CAZY_DB env variable either from config.txt or 'module load db-cazy'"
 g exit
 fi
-CPUS=$SLURM_CPUS_ON_NODE
+CPUS=${SLURM_CPUS_ON_NODE}
 if [ ! $CPUS ]; then
  CPUS=1
 fi
