@@ -32,10 +32,10 @@ if [ -z $N ]; then
 	echo "defaulting to IN value is 1 - specify with --array or cmdline"
     fi
 fi
-TOTAL=$(ls $PROTEINS/*.${EXT} | wc -l)
-if [ $IN -gt $TOTAL ]; then
- echo "Only $TOTAL files in folder $PROTEINS, skipping $IN"
- exit
+TOTAL=$(ls $PROTEINS | grep -c -P "${EXT}$" )
+if [ $N -gt $TOTAL ]; then
+    echo "Only $TOTAL files in folder $PROTEINS, skipping $IN"
+    exit
 fi
 INFILE=$(ls $PROTEINS/*.${EXT} | sed -n ${IN}p)
 XML=$DOMAINS/IPR/$(basename ${INFILE} .${EXT}).xml
