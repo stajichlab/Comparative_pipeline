@@ -12,8 +12,7 @@ use Pod::Usage;
 my $man = 0;
 my $help = 0;
 
-my $cdbfasta = 'cdbfasta';
-my $cdbyank  = 'cdbyank';
+my $sfetch = 'esl-sfetch';
     
 my ($indir,$out,$domainseq) = qw(domains/MEROPS summary domain_seq/MEROPS);
 my $outpref = 'MEROPS';
@@ -35,8 +34,7 @@ GetOptions('help|?'               => \$help, man => \$man,
 	   'ext|extension:s'      => \$ext,
 	   'db|database|seqs:s'   => \$seqdb,
 	   'species:s'            => \$speciesorder,
-	   'y|cdbyank|yank:s'     => \$cdbyank,
-	   'idx|cdbfasta:s'       => \$cdbfasta,
+	   'sfetch:s'             => \$sfetch,
 
 ) or pod2usage(2);
 pod2usage(1) if $help;
@@ -96,11 +94,18 @@ for my $file ( readdir($ind) ) {
 my @taxanames = sort keys %specieset;
 
 if ( $seqdb ) {
-    if( ! -f "$seqdb/allseq.cidx" ) {
+    my $sfetchexe = `which $sfetch`;
+    chomp($sfetchexe);
+    if ( ! -x $sfetchexe ) {
+	warn("cannot find esl-sfetch executable");
+	$seqdb = undef;
+    }
+    elsif( ! -f "$seqdb/allseq.ssi" ) {
 	`cat $seqdb/*.fasta > $seqdb/allseq`;
-	`$cdbfasta $seqdb/allseq`;
+	`$sfetch --index $seqdb/allseq`;
     }
 }
+
 mkdir($out) unless -d $out;
 open(my $fh => ">$out/$outpref\_counts.tsv") || die $!;
 open(my $fhgn => ">$out/$outpref\_counts_genes.tsv") || die $!;
@@ -116,8 +121,8 @@ for my $s ( map { $_->[0] }
     print $fhgn join("\t",$s,
 		     map { scalar keys %{$table_genes{$s}->{$_} || {}} }
 		     @taxanames), "\n";
-    if( $seqdb && -f "$seqdb/allseq.cidx" ) {
-	open(my $outseq => "| $cdbyank $seqdb/allseq.cidx > $domainseq/$s.fas") || die $!;
+    if( $seqdb && -f "$seqdb/allseq.ssi" ) {
+	open(my $outseq => "| $sfetch -f $seqdb/allseq - > $domainseq/$s.fas") || die $!;
 	print $outseq join("\n", map { keys %{$table_genes{$s}->{$_} || {}} }
 			   @taxanames ), "\n";
 	close($outseq);
