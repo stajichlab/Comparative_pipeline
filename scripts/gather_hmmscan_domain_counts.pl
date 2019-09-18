@@ -1,4 +1,4 @@
-#!env perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -10,7 +10,7 @@ use Pod::Usage;
 
 my $man = 0;
 my $help = 0;
-my $sfetch = 'sfetch';
+my $sfetch = 'esl-sfetch';
 
 my ($indir,$out,$domaindir) = qw(domains/Pfam summary domain_seq/Pfam);
 my $outpref = 'Pfam';
@@ -75,6 +75,7 @@ my @taxanames = sort keys %specieset;
 
 if ( $seqdb ) {
     my $sfetchexe = `which $sfetch`;
+    chomp($sfetchexe);
     if ( ! -x $sfetchexe ) {
 	warn("cannot find esl-sfetch executable");
 	$seqdb = undef;
@@ -102,7 +103,7 @@ for my $s ( map { $_->[0] }
 		     map { scalar keys %{$table_genes{$s}->{$_} || {}} } 
 		     @taxanames), "\n";
 
-    if( $seqdb && -f "$seqdb/allseq.cidx" ) {
+    if( $seqdb && -f "$seqdb/allseq.ssi" ) {
 	open(my $outseq => "| $sfetch -f $seqdb/allseq - > $domaindir/$s.fas") || die $!;
 	print $outseq join("\n", map { keys %{$table_genes{$s}->{$_} || {}} }
 			   @taxanames ), "\n";
