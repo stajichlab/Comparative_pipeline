@@ -2,7 +2,7 @@
 mkdir -p logs
 #SBATCH --nodes 1 --ntasks 4 --mem=4G --time 12:00:00
 #SBATCH --job-name=CAZY
-#SBATCH --output=logs/domains.CAZY.%A_%a.log
+#SBATCH --output=logs/domains.CAZY.%a.log
 
 DOMAINS=domains
 EXT=aa.fasta
