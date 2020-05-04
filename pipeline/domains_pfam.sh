@@ -2,7 +2,7 @@
 
 #SBATCH --nodes 1 --ntasks 8 --mem-per-cpu=2G
 #SBATCH --job-name=Pfam.domains
-#SBATCH --output=logs/domains.Pfam.%A_%a.log
+#SBATCH --output=logs/domains.Pfam.%a.log
 
 EXT=aa.fasta
 PROTEINS=pep
