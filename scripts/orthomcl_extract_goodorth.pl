@@ -28,8 +28,8 @@ my $prefix = 'ORTHO_';
 my $infile;
 my $max_per_species = 1;
 my $suffix = ".fa";
-my $cdbyank = 'cdbyank';
-my $cdbfasta = 'cdbfasta';
+my $sfetch = 'esl-sfetch';
+
 my @skip; # taxa to skip outputting
 GetOptions(
     'i|in:s'         => \$infile,
@@ -39,11 +39,10 @@ GetOptions(
     'maxsp:i'        => \$max_per_species,
     'p|prefix:s'     => \$prefix,
     'r|report:s'     => \$tab,
-    'y|cdbyank|yank:s' => \$cdbyank,
-    'idx|cdbfasta:s'  => \$cdbfasta,
+    'sfetch:s'       => \$sfetch,
     's|skip|skiptaxa|taxa:s' => \@skip,
-	   'h|help'         => \$help,
-	   );
+    'h|help'         => \$help,
+    );
 die("usage: $USAGE\n") if( $help || ! $db);
 
 mkdir($outdir) unless -d $outdir;
@@ -54,8 +53,8 @@ if( $tab ) {
 } else {
     $report_fh = \*STDOUT;
 }
-if ( ! -f "$db.cidx" ) {
- `cdbfasta $db`;
+if ( ! -f "$db.ssi" ) {
+    `$sfetch --index $db`;
 }
 #my $dbh = Bio::DB::Fasta->new($dbdir);
 my %skip_taxa = map { $_ => 1 } @skip;
@@ -101,7 +100,7 @@ for my $orth ( @orthologs ) {
 	}
 	if( @genes ) {
 	    my $outfile = File::Spec->catfile($outdir, $prefix . $i . $suffix);
-	    open(my $outseq => "| cdbyank $db.cidx > $outfile") || die $!;
+	    open(my $outseq => "| sfetch -f $db - > $outfile") || die $!;
 	    # @genes = sort @genes;
 	    #my $outseq = Bio::SeqIO->new(-format => 'fasta',
 	    #				 -file   => ">$outfile");
