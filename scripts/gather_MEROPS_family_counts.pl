@@ -126,7 +126,7 @@ for my $s ( map { $_->[0] }
 
 =head1 NAME
 
-gather_CAZY_domain_counts.pl - generate a table of domain counts from dbCAN results
+gather_MEROPS_family_counts.pl - generate a table of domain counts from dbCAN results
 
 =head1 USAGE
 
@@ -141,7 +141,7 @@ Generate table of domain counts for use in comparing, plotting as heatmap, etc
 -i / --input    Input folder  [One file per taxon/proteome]
 -o / --output   Output table
 -db /--database folder or file of sequences
--ext            Extension of the result files. Default is .domtbl
+-ext            Extension of the result files. Default is .blasttab
 -c / --cutoff   evalue cutoff
 
 =head1 AUTHOR
