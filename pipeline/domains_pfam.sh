@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-#SBATCH --nodes 1 --ntasks 8 --mem-per-cpu=2G
+#SBATCH --nodes 1 --ntasks 48 --mem 32gb  -p short 
 #SBATCH --job-name=Pfam.domains
 #SBATCH --output=logs/domains.Pfam.%a.log
 
@@ -17,7 +17,7 @@ fi
 mkdir -p $DOMAINS/Pfam
 
 module load db-pfam
-module load hmmer/3
+module load hmmer/3.3.2-mpi
 
 echo "running $PFAM_DB"
 
@@ -49,5 +49,6 @@ INFILE=$(ls $PROTEINS/*.${EXT} | sed -n ${IN}p)
 OUT=$DOMAINS/Pfam/$(basename ${INFILE} .${EXT})
 
 if [ ! -f ${OUT}.hmmscan ]; then
- hmmscan --cut_ga --cpu $CPUS --domtbl ${OUT}.domtbl -o ${OUT}.hmmscan $PFAM_DB/Pfam-A.hmm $INFILE
+ srun hmmsearch --mpi --cut_ga --domtbl ${OUT}.domtbl -o ${OUT}.hmmscan $PFAM_DB/Pfam-A.hmm $INFILE
+ #hmmscan --cut_ga --cpu $CPUS --domtbl ${OUT}.domtbl -o ${OUT}.hmmscan $PFAM_DB/Pfam-A.hmm $INFILE
 fi
