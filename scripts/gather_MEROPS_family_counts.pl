@@ -52,7 +52,7 @@ open(my $d2f => $domain2family ) || die "cannot open $domain2family: $!";
 my (%domainsFamily,%domainsSubFamily);
 while(<$d2f>) {
     my ($domain,$family,$subfamily) = split;
-    $domainsFamily{$domain} = $family;
+    $domainsFamily{$domain}    = $family;
     $domainsSubFamily{$domain} = $subfamily;
 }
 
@@ -73,7 +73,6 @@ for my $file ( readdir($ind) ) {
 	chomp;
 	my ($gene_name,$domain,$percentid,$ident,$mismatch,$gaps,$qstart,$qend,
 	    $hstart,$hend,$evalue,$bits) = split(/\t/,$_);
-
 	if( $evalue > $cutoff ) {
 	    # skip
 	    next;
@@ -81,7 +80,7 @@ for my $file ( readdir($ind) ) {
 	next if $seen{$gene_name}++;
 	my $family = $domainsFamily{$domain};
 	if( ! $family ) {
-	    warn("cannot find a family for $domain");
+	    warn("cannot find a family for $domain ($gene_name, $domain, $percentid)\n");
 	    $family = $domain;
 	}
 	$counts{$family}->{$species}++;
