@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-#SBATCH --nodes 1 --ntasks 2 --mem-per-cpu=1G --time 8:00:00
+#SBATCH --nodes 1 --ntasks 4 --mem-per-cpu=1G --time 2:00:00 -p short
 #SBATCH --job-name=MEROPS.domains
 #SBATCH --output=logs/domains.MEROPS.%a.log
 mkdir -p logs
@@ -28,7 +28,7 @@ if [ ! $MEROPS_DB ]; then
 fi
 
 CPUS=$SLURM_CPUS_ON_NODE
-if [ ! $CPUS ]; then
+if [ -z $CPUS ]; then
     CPUS=1
 fi
 
