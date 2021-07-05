@@ -19,8 +19,8 @@ fi
 
 mkdir -p $DOMAINS/MEROPS
 
-module load db-merops
-module load ncbi-blast/2.6.0+
+module load db-merops/120
+module load ncbi-blast/2.9.0+
 
 if [ ! $MEROPS_DB ]; then
     echo "Need a MEROPS_DB env variable either from config.txt or 'module load db-merops'"
