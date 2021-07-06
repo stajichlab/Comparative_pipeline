@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-#SBATCH --nodes 1 --ntasks 4 --mem-per-cpu=1G --time 2:00:00 -p short
+#SBATCH --nodes 1 --ntasks 4 --mem 2gb --time 2:00:00 -p short
 #SBATCH --job-name=MEROPS.domains
 #SBATCH --output=logs/domains.MEROPS.%a.log
 mkdir -p logs
