@@ -1,8 +1,10 @@
 #!/usr/bin/bash
-#SBATCH --nodes 1 --ntasks 16 -p short --mem=8G --time 2:00:00
+#SBATCH --nodes 1 --ntasks 24 -p short -C xeon --mem=8G --time 2:00:00
 #SBATCH --job-name=CAZY
 #SBATCH --output=logs/domains.CAZY.%a.log
-
+module load workspace/scratch
+export OMPI_TMPDIR=$SCRATCH
+hostname
 DOMAINS=domains
 EXT=aa.fasta
 if [ -f config.txt ]; then
@@ -58,7 +60,7 @@ if [ ! -f ${OUT}.hmmscan ]; then
     module unload hmmer/3.3.2-mpi
 fi
 
-if [[ ! -d $OUT.run_dbcan && ! -f $OUT.run_dbcan/overview.txt ]]; then
+if [[ ! -d $OUT.run_dbcan || ! -f $OUT.run_dbcan/overview.txt ]]; then
     module load run_dbcan    
     module load hmmer/3
     run_dbcan.py --db_dir $CAZY_FOLDER --out_dir $OUT.run_dbcan --tools all \
