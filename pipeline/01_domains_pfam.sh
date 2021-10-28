@@ -1,8 +1,9 @@
-#!/usr/bin/bash
-
-#SBATCH --nodes 1 --ntasks 48 --mem 32gb  -p short 
+#!/usr/bin/bash -l
+#SBATCH --nodes 1 --ntasks 48 --mem 32gb  -p short -C ryzen
 #SBATCH --job-name=Pfam.domains
 #SBATCH --output=logs/domains.Pfam.%a.log
+
+module load slurm
 
 EXT=aa.fasta
 PROTEINS=pep
