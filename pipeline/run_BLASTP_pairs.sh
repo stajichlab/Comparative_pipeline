@@ -1,10 +1,10 @@
-#!/usr/bin/bash
+#!/usr/bin/bash -l
 
 #SBATCH --mem 2G --nodes 1 --ntasks 8 --cpus-per-task 1 -p intel --time 24:00:00 --output blastp.%A_%a.out
 
 # THIS SCRIPT IS FOR RUNNING BLASTP for all pairs of split files
-
-module load ncbi-blast/2.6.0+
+# THIS COULD BE BETTER DONE WITH DIAMOND AND MMSEQS2 FOR SPEED
+module load ncbi-blast
 CPU=1
 if [ $SLURM_CPUS_ON_NODE ]; then
  CPU=$SLURM_CPUS_ON_NODE

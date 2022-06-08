@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/bash -l
 #SBATCH -p short -n 1 --mem 8gb --out logs/gather_MEROPS.log
 module load hmmer/3
 module load miniconda3

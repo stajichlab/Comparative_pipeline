@@ -1,9 +1,7 @@
-#!/bin/bash
+#!/bin/bash -l
 #SBATCH --nodes 1 --ntasks 24 --mem 96G --out logs/IPR.%A_%a.log -J IPR
 mkdir -p logs
-module unload miniconda2
-module load miniconda3
-module load funannotate/git-live
+module load funannotate
 module load iprscan
 
 DOMAINS=domains

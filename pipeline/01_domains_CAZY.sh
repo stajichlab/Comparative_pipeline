@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/bash -l
 #SBATCH --nodes 1 --ntasks 24 -p short -C xeon --mem=8G --time 2:00:00
 #SBATCH --job-name=CAZY
 #SBATCH --output=logs/domains.CAZY.%a.log

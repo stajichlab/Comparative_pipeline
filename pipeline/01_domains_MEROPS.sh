@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/bash -l
 #SBATCH --nodes 1 --ntasks 4 --mem 2gb --time 2:00:00 -p short
 #SBATCH --job-name=MEROPS.domains
 #SBATCH --output=logs/domains.MEROPS.%a.log
