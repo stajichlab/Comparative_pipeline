@@ -3,8 +3,6 @@
 #SBATCH --job-name=Pfam.domains
 #SBATCH --output=logs/domains.Pfam.%a.log
 
-module load slurm
-
 EXT=aa.fasta
 PROTEINS=pep
 DOMAINS=domains

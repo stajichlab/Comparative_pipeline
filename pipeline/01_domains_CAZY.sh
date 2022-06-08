@@ -57,7 +57,7 @@ if [ ! -f ${OUT}.hmmscan ]; then
     # hmmscan --cpu $CPUS --domtbl ${OUT}.domtbl -o ${OUT}.hmmscan $CAZY_DB $INFILE
     srun hmmscan --mpi --domtbl ${OUT}.domtbl -o ${OUT}.hmmscan $CAZY_DB $INFILE
     bash $CAZY_FOLDER/hmmscan-parser.sh ${OUT}.domtbl | sort > ${OUT}.tsv
-    module unload hmmer/3.3.2-mpi
+    module unload hmmer
 fi
 
 if [[ ! -d $OUT.run_dbcan || ! -f $OUT.run_dbcan/overview.txt ]]; then
