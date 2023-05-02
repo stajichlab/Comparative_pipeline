@@ -1,6 +1,6 @@
 #!/usr/bin/bash -l
-#SBATCH --nodes 1 --ntasks 24 -p short --mem=8G 
-#SBATCH --job-name=CAZY
+#SBATCH -N 1 -c 24 -n 1 -p short --mem=12G 
+#SBATCH --job-name=CAZY --time 2:00:00
 #SBATCH --output=logs/domains.CAZY.%a.log
 module load workspace/scratch
 export OMPI_TMPDIR=$SCRATCH
@@ -53,10 +53,12 @@ fi
 INFILE=$(ls $PROTEINS/*.${EXT} | sed -n ${IN}p)
 OUT=$DOMAINS/CAZY/$(basename ${INFILE} .${EXT})
 echo "processing $INFILE"
-if [ ! -f ${OUT}.hmmscan ]; then
+rsync -a $CAZY_FOLDER $SCRATCH
+if [ ! -f ${OUT}.tsv ]; then
     module load hmmer/3.3.2-mpi
     # hmmscan --cpu $CPUS --domtbl ${OUT}.domtbl -o ${OUT}.hmmscan $CAZY_DB $INFILE
-    srun hmmscan --mpi --domtbl ${OUT}.domtbl -o ${OUT}.hmmscan $CAZY_DB $INFILE
+    #srun hmmscan --mpi --domtbl ${OUT}.domtbl -o ${OUT}.hmmscan $SCRATCH/$(basename $CAZY_FOLDER)/$(basename $CAZY_DB) $INFILE
+    hmmscan --cpus $CPUS --domtbl ${OUT}.domtbl -o ${OUT}.hmmscan $SCRATCH/$(basename $CAZY_FOLDER)/$(basename $CAZY_DB) $INFILE
     bash $CAZY_FOLDER/hmmscan-parser.sh ${OUT}.domtbl | sort > ${OUT}.tsv
     module unload hmmer
 fi
@@ -64,7 +66,9 @@ fi
 if [[ ! -d $OUT.run_dbcan || ! -f $OUT.run_dbcan/overview.txt ]]; then
     module load run_dbcan    
     module load hmmer/3
+    #rsync -a /srv/projects/db/CAZY/CAZyDB/v11.0/dbCAN_sub.hmm 
+    export CAZY_FOLDER=$SCRATCH/$(basename $CAZY_FOLDER)
     run_dbcan --db_dir $CAZY_FOLDER --out_dir $OUT.run_dbcan --tools all \
-	    --dbcan_thread $CPUS --stp_cpu $CPUS --hmm_cpu $CPUS --dia_cpu $CPUS --tf_cpu $CPUS \
-	    --use_signalP true $INFILE protein 
+	    --dbcan_thread $CPUS --hmm_cpu $CPUS --dia_cpu $CPUS \
+	    --use_signalP=TRUE --signalP_path $(which signalp) $INFILE protein 
 fi
