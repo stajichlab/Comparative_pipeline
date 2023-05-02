@@ -1,5 +1,5 @@
 #!/usr/bin/bash -l
-#SBATCH --nodes 1 --ntasks 24 -p short -C xeon --mem=8G --time 2:00:00
+#SBATCH --nodes 1 --ntasks 24 -p short --mem=8G 
 #SBATCH --job-name=CAZY
 #SBATCH --output=logs/domains.CAZY.%a.log
 module load workspace/scratch
@@ -34,11 +34,12 @@ CPUS=${SLURM_CPUS_ON_NODE}
 if [ ! $CPUS ]; then
  CPUS=1
 fi
+
 IN=${SLURM_ARRAY_TASK_ID}
 
-if [ -z $IN ]; then
+if [ -z "$IN" ]; then
  IN=$1
- if [ -z $IN ]; then
+ if [ -z "$IN" ]; then
    IN=1
    echo "defaulting to IN value is 1 - specify with --array or cmdline"
  fi
@@ -51,7 +52,7 @@ if [ $IN -gt $TOTAL ]; then
 fi
 INFILE=$(ls $PROTEINS/*.${EXT} | sed -n ${IN}p)
 OUT=$DOMAINS/CAZY/$(basename ${INFILE} .${EXT})
-
+echo "processing $INFILE"
 if [ ! -f ${OUT}.hmmscan ]; then
     module load hmmer/3.3.2-mpi
     # hmmscan --cpu $CPUS --domtbl ${OUT}.domtbl -o ${OUT}.hmmscan $CAZY_DB $INFILE
@@ -64,6 +65,6 @@ if [[ ! -d $OUT.run_dbcan || ! -f $OUT.run_dbcan/overview.txt ]]; then
     module load run_dbcan    
     module load hmmer/3
     run_dbcan --db_dir $CAZY_FOLDER --out_dir $OUT.run_dbcan --tools all \
-	--stp_cpu $CPUS --dbcan_thread $CPUS --hmm_cpu $CPUS --dia_cpu $CPUS --tf_cpu $CPUS \
-	$INFILE protein 
+	    --dbcan_thread $CPUS --stp_cpu $CPUS --hmm_cpu $CPUS --dia_cpu $CPUS --tf_cpu $CPUS \
+	    --use_signalP true $INFILE protein 
 fi
