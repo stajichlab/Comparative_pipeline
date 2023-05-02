@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/bash -l
 
 #SBATCH --nodes 1 --ntasks 24 --mem 24G -p intel --time 3-0:00:00
 #SBATCH --job-name=AntiSMASH
@@ -42,11 +42,7 @@ fi
 INFILE=$(ls $GENBANK/*.${EXT} | sed -n ${N}p)
 echo "INFILE=$INFILE"
 OUT=$OUTDIR/$(basename ${INFILE} .${EXT})
-module unload perl
-module unload perl
-module load antismash/4.1.0
-module unload python/3
-source activate antismash
+module load antismash
 CPU=$SLURM_CPUS_ON_NODE
 
 antismash --taxon fungi -c $CPUS --outputfolder $OUT   --clusterblast  --subclusterblast --smcogs --knownclusterblast \

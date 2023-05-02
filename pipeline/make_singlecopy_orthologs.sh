@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/bash -l
 #SBATCH --time 2:00:00 -p short --mem 4G --ntasks 1 -J orthSingleCopy --out ortholog_singlecopy.log
 COMPAREFOLDER=./Comparative_pipeline
 INFLATION=15
@@ -12,6 +12,7 @@ else
  exit
 fi
 
+# THIS SHOULD REALLY BE REPLACED WITH INETRACTION WITH ORTHOFINDER RESULTS INSTEAD
 module load cdbfasta
 ALLPROTEINS=goodProteins.fasta
 if [ ! -f $ALLPROTEINS ]; then

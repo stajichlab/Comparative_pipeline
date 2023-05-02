@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/bash -l
 
 #SBATCH --time 2-0:00:00 --ntasks 8 --mem 32G --out orthagogue.log
 module load orthagogue
@@ -10,6 +10,7 @@ else
  echo "need config file to set some project-specific variables"
  exit
 fi
+ # ORTHOFINDER IS A BETTER TOOL TO USE HERE
 ORTHOFOLDER=orthologs
 CPU=2
 if  [ $SLURM_CPUS_ON_NODE ]; then

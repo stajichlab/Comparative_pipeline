@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/bash -l
 #SBATCH --mem 4G --ntasks 16 --nodes 1 --time 1-0:00:00 -J RM --out=RM.%A_%a.out
 module load RepeatMasker
 

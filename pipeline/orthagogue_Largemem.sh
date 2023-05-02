@@ -1,5 +1,4 @@
-#!/usr/bin/bash
-
+#!/usr/bin/bash -l
 #SBATCH --time 2-0:00:00 --ntasks 8 --mem 350G
 module load orthagogue
 module load mcl
@@ -10,7 +9,7 @@ else
  echo "need config file to set some project-specific variables"
  exit
 fi
-
+ #THIS REALLY SHOULD BE USING ORTHOFINDER INSTEAD
 CPU=8
 if  [ $SLURM_CPUS_ON_NODE ]; then
  CPU=$SLURM_CPUS_ON_NODE

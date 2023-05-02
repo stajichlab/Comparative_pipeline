@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/bash -l
 #SBATCH --nodes 1 --ntasks 1 --mem 2G --time 2:00:00 -p short -J MSA
 
 module load muscle

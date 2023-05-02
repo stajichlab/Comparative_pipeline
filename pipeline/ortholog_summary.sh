@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/bash -l
 #SBATCH --time 2:00:00 -p short --mem 2G --ntasks 1 -J orthologSum --out ortholog_summary.log
 COMPAREFOLDER=./Comparative_pipeline
 INFLATION=15
@@ -10,6 +10,7 @@ else
  exit
 fi
 
+# REPLACE WITH ORTHOFINDER INSTEAD OF ORTHOMCL
 if [ ! -f goodProteins.fasta ]; then
  module load hmmer/2
  cat $ORTHOINPUT/*.fasta | sreformat fasta - > goodProteins.fasta

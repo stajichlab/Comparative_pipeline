@@ -1,8 +1,8 @@
-#!/usr/bin/bash
+#!/usr/bin/bash -l
 #SBATCH --time 2:00:00 --mem 1G --ntasks 1 -J prepareBLASTP
 # BASH script to setup pairwise BLASTP runs
 
-module load ncbi-blast/2.6.0+
+module load ncbi-blast
 CPU=1
 DBSIZE=1000000
 E=1e-3

@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/bash -l
 #SBATCH --mem 64G --ntasks 8 --nodes 1 -p intel --time 24:00:00 --out combine_BLASTP.log
 
 TMPDIR=/scratch

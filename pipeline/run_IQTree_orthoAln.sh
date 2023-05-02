@@ -1,8 +1,8 @@
-#!/usr/bin/bash
+#!/usr/bin/bash -l
 #SBATCH --nodes 1 --ntasks 2 --mem 2G --time 2:00:00 -p short -J IQTREE.Orthologs
 
 CPU=2
-module load IQ-TREE
+module load iqtree
 N=0
 if [ ${SLURM_ARRAY_TASK_ID} ]; then
  N=${SLURM_ARRAY_TASK_ID}
@@ -34,7 +34,7 @@ do
  do
  DEST=$FILENAME.$ALNEXT
  if [ ! -f $DEST ]; then
-  iqtree-omp -s $FILENAME -bb 1000 -nt $CPU 
+  iqtree2 -s $FILENAME -bb 1000 -nt $CPU  -alrt 1000
  fi
  done
 done
