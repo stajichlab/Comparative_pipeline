@@ -64,6 +64,6 @@ if [[ ! -d $OUT.run_dbcan || ! -f $OUT.run_dbcan/overview.txt ]]; then
     module load run_dbcan    
     module load hmmer/3
     run_dbcan --db_dir $CAZY_FOLDER --out_dir $OUT.run_dbcan --tools all \
-	--stp_cpu $CPUS --eCAMI_jobs $CPUS --hmm_cpu $CPUS --dia_cpu $CPUS --tf_cpu $CPUS \
+	--stp_cpu $CPUS --dbcan_thread $CPUS --hmm_cpu $CPUS --dia_cpu $CPUS --tf_cpu $CPUS \
 	$INFILE protein 
 fi
